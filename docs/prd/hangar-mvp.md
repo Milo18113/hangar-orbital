@@ -27,10 +27,10 @@ De 3 a 5 jefes de hangar, todos con el mismo permiso: cualquiera puede registrar
 ## 6. Reglas de negocio
 1. Una nave está **apta** si cumple las tres condiciones:
    - tiene al menos un cuarto del tanque de combustible (25 % o más);
-   - lleva 3 misiones completadas o menos desde su última revisión;
+   - lleva 3 misiones asignadas o menos desde su última revisión;
    - no está en dique seco.
 2. No se puede asignar una misión a una nave no apta.
-3. Una misión suma al contador de la nave cuando se completa, no cuando se asigna.
+3. Una misión suma al contador de la nave en cuanto se asigna, aunque todavía no se haya completado.
 4. Al completar una misión es obligatorio anotar el combustible restante. El nivel se puede corregir en cualquier momento, por ejemplo tras repostar.
 5. Registrar una revisión pone a cero el contador de misiones.
 6. Al entrar en dique seco, la nave pierde sus misiones pendientes y no puede recibir otras nuevas mientras siga allí.
@@ -44,7 +44,6 @@ De 3 a 5 jefes de hangar, todos con el mismo permiso: cualquiera puede registrar
 - [SUPUESTO] Como no hay inicio de sesión, no se registra qué jefe hizo cada acción.
 
 ## 8. Puntos abiertos
-- ¿Puede una nave apta tener varias misiones pendientes a la vez? Si puede, la nave acumularía más de 3 misiones antes de completar ninguna, y la regla del contador no lo detectaría a tiempo.
 - ¿Puede una nave tener dos misiones con fechas superpuestas, es decir, una que despega antes de que termine la otra?
 - Al salir del dique seco, ¿hay que anotar también el combustible?
 - Si una nave deja de ser apta teniendo misiones pendientes (por ejemplo, tras una corrección de combustible), ¿se mantienen esas misiones o se liberan?

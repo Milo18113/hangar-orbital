@@ -75,8 +75,8 @@ Como jefe de hangar, quiero ver la lista de todas las naves registradas, para sa
 Como jefe de hangar, quiero asignar una misión a una nave, y que la app lo impida si la nave no es apta, para que ninguna nave no apta salga a misión.
 - **Alcance PRD:** A2 (asignar misiones con bloqueo). **Reglas:** R2.
 - **Depende de:** la regla de aptitud R1 (E2).
-- **Punto abierto que la afecta:** si una nave puede tener varias misiones pendientes a la vez, incluidas misiones con fechas superpuestas.
-- **Reglas del PRD que aplican:** R1 (aptitud), R2 (no se asigna a una nave no apta), R3 (asignar no suma al contador) y R6 (una nave en dique seco no recibe misiones).
+- **Punto abierto que la afecta:** si una nave puede tener dos misiones con fechas superpuestas.
+- **Reglas del PRD que aplican:** R1 (aptitud), R2 (no se asigna a una nave no apta), R3 (asignar suma al contador) y R6 (una nave en dique seco no recibe misiones).
 - **Decisiones del cliente:**
   - Una misión necesita nave, destino, fecha de despegue y duración.
   - La fecha de despegue puede ser hoy, pero no anterior.
@@ -85,19 +85,19 @@ Como jefe de hangar, quiero asignar una misión a una nave, y que la app lo impi
 
 #### Criterios de aceptación
 1. **Asignación a una nave apta (R2)**
-   - DADO una nave con un 60 % de combustible, 1 misión completada desde la última revisión y fuera de dique seco,
+   - DADO una nave con un 60 % de combustible, 1 misión asignada desde la última revisión y fuera de dique seco,
    - CUANDO le asigno una misión con destino, fecha de despegue mañana y duración de 5 días,
    - ENTONCES la misión aparece como pendiente de esa nave, con su destino, fecha y duración.
-2. **Asignar no suma al contador (R3)**
-   - DADO una nave apta con 2 misiones completadas desde la última revisión,
+2. **Asignar suma al contador (R3)**
+   - DADO una nave apta con 2 misiones asignadas desde la última revisión,
    - CUANDO le asigno una misión válida,
-   - ENTONCES la nave sigue mostrando 2 misiones desde la última revisión y sigue apta.
+   - ENTONCES la nave pasa a mostrar 3 misiones desde la última revisión y sigue apta.
 3. **Límite exacto de misiones (R1)**
-   - DADO una nave con 3 misiones completadas desde la última revisión y el resto de condiciones en regla,
+   - DADO una nave con 3 misiones asignadas desde la última revisión y el resto de condiciones en regla,
    - CUANDO le asigno una misión válida,
    - ENTONCES la app la acepta.
 4. **Demasiadas misiones sin revisión (R1, R2)**
-   - DADO una nave con 4 misiones completadas desde la última revisión,
+   - DADO una nave con 4 misiones asignadas desde la última revisión,
    - CUANDO intento asignarle una misión,
    - ENTONCES la app no la asigna y me indica que la nave necesita revisión.
 5. **Combustible insuficiente (R1, R2)**
@@ -138,7 +138,7 @@ Como jefe de hangar, quiero asignar una misión a una nave, y que la app lo impi
     - ENTONCES la app no la asigna y me avisa de que la duración debe ser un número entero de días, como mínimo 1.
 
 #### Casos borde sin cubrir
-- **Varias misiones pendientes y fechas superpuestas (punto abierto del PRD):** una nave con 3 misiones completadas y otras 2 pendientes llegaría a 5 sin que el bloqueo lo impida. Tampoco está decidido si puede tener dos misiones cuyas fechas se solapen.
+- **Fechas superpuestas (punto abierto del PRD):** no está decidido si una nave puede tener dos misiones cuyas fechas se solapen.
 - **Qué día es "hoy":** si los jefes trabajan en turnos de noche o en zonas horarias distintas, hay que acordar con qué reloj se decide que una fecha ya pasó.
 - **Pantalla desactualizada:** la nave era apta cuando la vi, pero otro jefe la puso en dique seco antes de que yo confirmara. ¿La app vuelve a comprobar la aptitud al confirmar?
 - **Dos jefes asignando a la vez** una misión a la misma nave.
@@ -155,8 +155,8 @@ Como jefe de hangar, quiero ver las misiones pendientes de cada nave, para saber
 ### HU-1.5 · Completar una misión
 **Estado:** por refinar.
 
-Como jefe de hangar, quiero marcar una misión pendiente como completada, para que cuente en el contador de misiones de la nave.
-- **Alcance PRD:** A2 (marcar como completadas). **Reglas:** R3.
+Como jefe de hangar, quiero marcar una misión pendiente como completada, para dejar constancia de que la nave volvió y anotar el combustible que le queda.
+- **Alcance PRD:** A2 (marcar como completadas). **Reglas:** R4. La misión ya sumó al contador al asignarse (R3), así que completarla no lo cambia.
 - **Nota:** anotar el combustible restante al completar es obligatorio (R4), pero esa parte pertenece a E2. Las dos historias tienen que salir juntas.
 
 ## Historias fuera de alcance
@@ -213,7 +213,7 @@ Historias del sprint: HU-1.1 y HU-1.3. Según AGENTS.md, ninguna funcionalidad s
 #### T-03 · Guardar y mostrar naves
 - **Historia:** HU-1.1.
 - **Tipo:** Datos/Interfaz.
-- **Descripción:** añadir la migración de naves y un servicio en `src/services/` para registrar y listar naves. Añadir también un componente con el formulario de registro y la lista de naves, que muestre si cada nave está apta usando T-02.
+- **Descripción:** añadir la migración de naves y misiones, y un servicio en `src/services/` para registrar y listar naves. Añadir también la función que cuenta las misiones de una nave desde su última revisión, porque la lista la necesita para mostrar la aptitud. Añadir también un componente con el formulario de registro y la lista de naves, que muestre si cada nave está apta usando T-02.
 - **Definition of Done:**
   - [ ] La migración está en `supabase/migraciones/`, en snake_case, e impide nombres repetidos.
   - [ ] Solo el servicio llama a Supabase; el componente no.
@@ -250,11 +250,10 @@ Historias del sprint: HU-1.1 y HU-1.3. Según AGENTS.md, ninguna funcionalidad s
 #### T-06 · Guardar la misión y mostrar el resultado
 - **Historia:** HU-1.3.
 - **Tipo:** Datos/Interfaz.
-- **Descripción:** añadir la migración de misiones (pendiente o completada, ligada a una nave) y un servicio que asigne misiones y liste las pendientes de una nave. El servicio vuelve a comprobar la aptitud con los datos actuales antes de guardar. Añadir también un componente con el formulario de asignación, que muestre la misión pendiente o los motivos de rechazo.
+- **Descripción:** añadir un servicio que asigne misiones a una nave. La migración de misiones se adelanta a T-03 (ver la spec 01). En este sprint las misiones no tienen estado: el estado llegará con HU-1.5. El servicio vuelve a comprobar la aptitud con los datos actuales antes de guardar. Añadir también un componente con el formulario de asignación, que muestre la misión pendiente o los motivos de rechazo.
 - **Definition of Done:**
-  - [ ] La migración está en `supabase/migraciones/` y en snake_case.
   - [ ] Solo el servicio llama a Supabase.
-  - [ ] Asignar una misión no cambia el contador de misiones de la nave (R3).
+  - [ ] Al asignar una misión, el contador de misiones de la nave sube en 1 (R3).
   - [ ] Una asignación rechazada no deja ninguna misión guardada.
   - [ ] La pantalla muestra la misión pendiente con su destino, fecha y duración, o todos los motivos de rechazo.
   - [ ] `npm test` y `npm run build` pasan.

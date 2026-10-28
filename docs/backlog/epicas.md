@@ -12,7 +12,7 @@ Basado en [docs/prd/hangar-mvp.md](../prd/hangar-mvp.md). Los números de alcanc
 
 **Reglas de negocio:**
 - R2: no se puede asignar una misión a una nave no apta. La aptitud la calcula E2.
-- R3: una misión suma al contador de la nave cuando se completa, no cuando se asigna.
+- R3: una misión suma al contador de la nave en cuanto se asigna.
 
 ## E2 · Mantenimiento
 **Objetivo:** que los jefes sepan en todo momento qué naves no están aptas y por qué, y mantengan al día el combustible, las revisiones y la reparación.
