@@ -45,6 +45,7 @@ De 3 a 5 jefes de hangar, todos con el mismo permiso: cualquiera puede registrar
 
 ## 8. Puntos abiertos
 - ¿Puede una nave apta tener varias misiones pendientes a la vez? Si puede, la nave acumularía más de 3 misiones antes de completar ninguna, y la regla del contador no lo detectaría a tiempo.
+- ¿Puede una nave tener dos misiones con fechas superpuestas, es decir, una que despega antes de que termine la otra?
 - Al salir del dique seco, ¿hay que anotar también el combustible?
 - Si una nave deja de ser apta teniendo misiones pendientes (por ejemplo, tras una corrección de combustible), ¿se mantienen esas misiones o se liberan?
 - ¿Hace falta conservar un historial de misiones y revisiones, o basta con el estado actual de cada nave?
