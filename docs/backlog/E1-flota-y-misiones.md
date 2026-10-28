@@ -184,19 +184,23 @@ Historias del sprint: HU-1.1 y HU-1.3. Según AGENTS.md, ninguna funcionalidad s
 ### HU-1.1 · Registrar una nave
 
 #### T-01 · Preparar el proyecto
+**Estado:** hecho.
+
 - **Historia:** HU-1.1 (también la necesita HU-1.3).
 - **Tipo:** Configuración.
 - **Descripción:** crear el proyecto con su stack, los tests y el formato, y dejar listo en `src/lib/supabase.ts` el cliente de Supabase. El cliente lee la URL y la clave pública desde variables de entorno.
 - **Definition of Done:**
-  - [ ] `npm run dev` arranca la app vacía.
-  - [ ] `npm test` se ejecuta y pasa al menos un test de prueba.
-  - [ ] `npm run build` compila sin errores.
-  - [ ] Prettier está configurado y el código está formateado.
-  - [ ] El cliente de Supabase usa solo la clave pública y no hay claves escritas en el código.
-  - [ ] Existen las carpetas previstas en AGENTS.md.
+  - [x] `npm run dev` arranca la app vacía.
+  - [x] `npm test` se ejecuta y pasa al menos un test de prueba.
+  - [x] `npm run build` compila sin errores.
+  - [x] Prettier está configurado y el código está formateado.
+  - [x] El cliente de Supabase usa solo la clave pública y no hay claves escritas en el código.
+  - [x] Existen las carpetas previstas en AGENTS.md.
 - **Dependencias:** ninguna.
 
 #### T-02 · Reglas de la nave: registro y aptitud
+**Estado:** hecho.
+
 - **Historia:** HU-1.1.
 - **Tipo:** Modelo/Dominio.
 - **Descripción:** en `src/types/` y `src/dominio/`, definir la nave y sus tres clases, y escribir dos funciones puras:
@@ -204,69 +208,79 @@ Historias del sprint: HU-1.1 y HU-1.3. Según AGENTS.md, ninguna funcionalidad s
   - una que calcule si la nave está apta y por qué motivos no (R1).
 - **Nota:** la aptitud es una regla de E2, pero aquí se adelanta lo mínimo, porque HU-1.1 la muestra y HU-1.3 la usa para bloquear.
 - **Definition of Done:**
-  - [ ] Hay tests unitarios para cada regla de validación, incluidos los límites (0 %, 100 %, valores fuera de rango, nombre o clase vacíos).
-  - [ ] Hay tests de aptitud en los límites (25 % y 24 %; 3 y 4 misiones; dentro y fuera de dique seco) y para varios motivos a la vez.
-  - [ ] Ningún tipo usa `any`.
-  - [ ] `npm test` pasa.
+  - [x] Hay tests unitarios para cada regla de validación, incluidos los límites (0 %, 100 %, valores fuera de rango, nombre o clase vacíos).
+  - [x] Hay tests de aptitud en los límites (25 % y 24 %; 3 y 4 misiones; dentro y fuera de dique seco) y para varios motivos a la vez.
+  - [x] Ningún tipo usa `any`.
+  - [x] `npm test` pasa.
 - **Dependencias:** T-01 y la spec de HU-1.1.
 
 #### T-03 · Guardar y mostrar naves
+**Estado:** pendiente: el código está hecho, pero falta verificar en el navegador lo que se ve en pantalla.
+
 - **Historia:** HU-1.1.
 - **Tipo:** Datos/Interfaz.
 - **Descripción:** añadir la migración de naves y misiones, y un servicio en `src/services/` para registrar y listar naves. Añadir también la función que cuenta las misiones de una nave desde su última revisión, porque la lista la necesita para mostrar la aptitud. Añadir también un componente con el formulario de registro y la lista de naves, que muestre si cada nave está apta usando T-02.
 - **Definition of Done:**
-  - [ ] La migración está en `supabase/migraciones/`, en snake_case, e impide nombres repetidos.
-  - [ ] Solo el servicio llama a Supabase; el componente no.
-  - [ ] El formulario muestra el aviso de cada dato que falta o no es válido, y el de nombre repetido.
-  - [ ] Una nave nueva aparece en la lista con su clase, su combustible, 0 misiones, fuera de dique seco y su aptitud.
-  - [ ] `npm test` y `npm run build` pasan.
+  - [x] La migración está en `supabase/migraciones/`, en snake_case, e impide nombres repetidos.
+  - [x] Solo el servicio llama a Supabase; el componente no.
+  - [ ] El formulario muestra el aviso de cada dato que falta o no es válido, y el de nombre repetido. *(Implementado; sin verificar en el navegador.)*
+  - [ ] Una nave nueva aparece en la lista con su clase, su combustible, 0 misiones, fuera de dique seco y su aptitud. *(Implementado; sin verificar en el navegador.)*
+  - [x] `npm test` y `npm run build` pasan.
 - **Dependencias:** T-02.
 - **Bloqueado en parte por:** si "Aurora" y "aurora " cuentan como el mismo nombre (caso borde abierto).
 
 #### T-04 · Verificar los criterios de HU-1.1
+**Estado:** pendiente: faltan los resultados del navegador en `docs/VERIFICACION.md`.
+
 - **Historia:** HU-1.1.
 - **Tipo:** Test.
 - **Descripción:** comprobar los 9 criterios de aceptación de HU-1.1, con tests automáticos donde se pueda y con una prueba manual en pantalla para el resto.
 - **Definition of Done:**
-  - [ ] Cada criterio (1–9) tiene un test o una prueba manual anotada con su resultado.
+  - [ ] Cada criterio (1–9) tiene un test o una prueba manual anotada con su resultado. *(CA3 a CA8 tienen test; CA1, CA2 y CA9 no tienen resultado anotado.)*
   - [ ] Los criterios 1, 3 y 4 (aptitud visible) se comprueban en la pantalla.
-  - [ ] `npm test` y `npm run build` pasan.
+  - [x] `npm test` y `npm run build` pasan.
 - **Dependencias:** T-03.
 
 ### HU-1.3 · Asignar una misión a una nave apta
 
 #### T-05 · Reglas de la misión y de la asignación
+**Estado:** hecho.
+
 - **Historia:** HU-1.3.
 - **Tipo:** Modelo/Dominio.
 - **Descripción:** en `src/types/` y `src/dominio/`, definir la misión y escribir una función pura que decida si se puede asignar. Comprueba los datos obligatorios, que la fecha no sea anterior a hoy y que la duración sea un entero de 1 o más. Además, usa la aptitud de T-02 y devuelve todos los motivos de rechazo.
 - **Definition of Done:**
-  - [ ] Hay tests de datos que faltan, de fecha hoy y ayer, y de duración 1, 0, negativa y decimal.
-  - [ ] Hay tests de rechazo por aptitud, y uno que comprueba que se devuelven varios motivos a la vez.
-  - [ ] "Hoy" se recibe como parámetro, para que los tests no dependan del reloj.
-  - [ ] Ningún tipo usa `any` y `npm test` pasa.
+  - [x] Hay tests de datos que faltan, de fecha hoy y ayer, y de duración 1, 0, negativa y decimal.
+  - [x] Hay tests de rechazo por aptitud, y uno que comprueba que se devuelven varios motivos a la vez. *(Están en `aptitud.test.ts`. La combinación de validación y aptitud vive en `misionesService.crear`, que no tiene test unitario.)*
+  - [x] "Hoy" se recibe como parámetro, para que los tests no dependan del reloj.
+  - [x] Ningún tipo usa `any` y `npm test` pasa.
 - **Dependencias:** T-02 y la spec de HU-1.3.
 - **Bloqueado en parte por:** con qué reloj se decide qué día es "hoy" (caso borde abierto).
 
 #### T-06 · Guardar la misión y mostrar el resultado
+**Estado:** pendiente: el código está hecho, pero falta verificar en el navegador lo que se ve en pantalla y lo que queda guardado.
+
 - **Historia:** HU-1.3.
 - **Tipo:** Datos/Interfaz.
 - **Descripción:** añadir un servicio que asigne misiones a una nave. La migración de misiones se adelanta a T-03 (ver la spec 01). En este sprint las misiones no tienen estado: el estado llegará con HU-1.5. El servicio vuelve a comprobar la aptitud con los datos actuales antes de guardar. Añadir también un componente con el formulario de asignación, que muestre la misión pendiente o los motivos de rechazo.
 - **Definition of Done:**
-  - [ ] Solo el servicio llama a Supabase.
-  - [ ] Al asignar una misión, el contador de misiones de la nave sube en 1 (R3).
-  - [ ] Una asignación rechazada no deja ninguna misión guardada.
-  - [ ] La pantalla muestra la misión pendiente con su destino, fecha y duración, o todos los motivos de rechazo.
-  - [ ] `npm test` y `npm run build` pasan.
+  - [x] Solo el servicio llama a Supabase.
+  - [ ] Al asignar una misión, el contador de misiones de la nave sube en 1 (R3). *(Sin verificar: V-17.)*
+  - [ ] Una asignación rechazada no deja ninguna misión guardada. *(En el código, `crear` vuelve antes de insertar; falta comprobarlo en Supabase.)*
+  - [ ] La pantalla muestra la misión pendiente con su destino, fecha y duración, o todos los motivos de rechazo. *(Sin verificar: V-10, V-11 y V-20.)*
+  - [x] `npm test` y `npm run build` pasan.
 - **Dependencias:** T-03 y T-05.
 
 #### T-07 · Verificar los criterios de HU-1.3
+**Estado:** pendiente: faltan los resultados del navegador en `docs/VERIFICACION.md`.
+
 - **Historia:** HU-1.3.
 - **Tipo:** Test.
 - **Descripción:** comprobar los 13 criterios de aceptación de HU-1.3, con tests automáticos donde se pueda y con una prueba manual en pantalla para el resto.
 - **Definition of Done:**
-  - [ ] Cada criterio (1–13) tiene un test o una prueba manual anotada con su resultado.
+  - [ ] Cada criterio (1–13) tiene un test o una prueba manual anotada con su resultado. *(CA3 a CA6 y CA8 a CA13 tienen test; CA1, CA2 y CA7 no tienen resultado anotado.)*
   - [ ] La prueba manual incluye una nave en dique seco y una con 4 misiones, preparadas a mano porque esas funciones son de E2.
-  - [ ] `npm test` y `npm run build` pasan.
+  - [x] `npm test` y `npm run build` pasan.
 - **Dependencias:** T-06.
 
 ### Orden de ejecución sugerido
