@@ -268,6 +268,24 @@ Ningún componente importa Supabase; todos usan los servicios. "Hoy" se obtiene 
 | HU-1.3-CA12 | Vitest | Duración 1 → sin error. |
 | HU-1.3-CA13 | Vitest | 0, -1 y 2,5 → error en `duracionDias`. |
 
+### Resultados (T-04 y T-07)
+**Automático (Vitest), 2026-10-28:** 44 tests en verde.
+- `nave.test.ts`: 17 tests.
+- `aptitud.test.ts`: 12 tests.
+- `mision.test.ts`: 15 tests.
+
+Cubren todos los criterios marcados como "Vitest" en la tabla anterior:
+- HU-1.1: CA2 a CA8.
+- HU-1.3: CA3 a CA13.
+
+**Manual (navegador), pendiente:** la tiene que hacer un jefe de hangar contra Supabase.
+- [ ] HU-1.1-CA1: registrar una nave y verla en la flota como "Operativa" y "Apta".
+- [ ] HU-1.1-CA2: el selector solo ofrece las tres clases.
+- [ ] HU-1.1-CA9: registrar "Aurora" dos veces; la segunda muestra el aviso de nombre repetido.
+- [ ] HU-1.3-CA1: asignar una misión y ver la confirmación con destino, fecha y duración.
+- [ ] HU-1.3-CA2: una nave con 2 misiones pasa a 3 y sigue apta.
+- [ ] HU-1.3-CA7: con una nave puesta en reparación desde el panel de Supabase, la asignación se rechaza con el motivo "en reparación".
+
 ## 8. Tickets y archivos
 Respecto al backlog, este reparto cambia una cosa: la migración completa y `contarDesdeRevision` se adelantan a T-03, porque `ListaNaves` necesita contar misiones para mostrar la aptitud.
 
