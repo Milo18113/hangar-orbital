@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consola de Hangar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: tablero de referencia en bandas; cada banda es una sección del DESIGN.md, construida con sus propios tokens. Tema oscuro único, por decisión de diseño. */
+:root {
+  color-scheme: dark;
+  --color-fondo: #0E1420;
+  --color-superficie: #161E2E;
+  --color-superficie-alta: #1F2A3F;
+  --color-borde: #2C3A54;
+  --color-borde-control: #6B7C9E;
+  --color-texto: #E8EEF7;
+  --color-texto-suave: #A3B1C8;
+  --color-acento: #6CC4FF;
+  --color-sobre-acento: #0E1420;
+  --color-apta: #46D39A;
+  --color-apta-fondo: #163A2F;
+  --color-no-apta: #FF6B6B;
+  --color-no-apta-fondo: #3D1E26;
+  --color-reparacion: #F2B84B;
+  --color-reparacion-fondo: #3A2E17;
+
+  --fuente-titulo: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --fuente-texto: "IBM Plex Sans", system-ui, sans-serif;
+  --fuente-cifras: "IBM Plex Mono", ui-monospace, monospace;
+
+  --texto-xl: 1.75rem;
+  --texto-lg: 1.25rem;
+  --texto-base: 1rem;
+  --texto-sm: 0.875rem;
+  --texto-xs: 0.75rem;
+
+  --espacio-1: 4px; --espacio-2: 8px; --espacio-3: 12px; --espacio-4: 16px;
+  --espacio-6: 24px; --espacio-8: 32px; --espacio-12: 48px;
+  --radio-sm: 4px; --radio-md: 8px;
+  --borde: 1px solid var(--color-borde);
+  --duracion-corta: 120ms;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente-texto);
+  font-size: var(--texto-base);
+  line-height: 1.5;
+}
+.contenedor {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-block: var(--espacio-8) var(--espacio-12);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: var(--espacio-12);
+}
+h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1.2; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.etiqueta {
+  font-family: var(--fuente-titulo); font-size: var(--texto-xs); font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-texto-suave);
+}
+.cifra { font-family: var(--fuente-cifras); font-variant-numeric: tabular-nums; }
+.suave { color: var(--color-texto-suave); }
+code { font-family: var(--fuente-cifras); font-size: 0.85em; color: var(--color-acento); overflow-wrap: anywhere; }
+
+/* Cabecera */
+.cabecera { display: grid; gap: var(--espacio-6); grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: end; border-bottom: var(--borde); padding-bottom: var(--espacio-8); }
+.cabecera h1 { font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: -0.01em; }
+.cabecera .lema { font-size: var(--texto-lg); color: var(--color-texto-suave); margin-top: var(--espacio-2); }
+.meta { display: flex; flex-wrap: wrap; gap: var(--espacio-2) var(--espacio-4); margin-top: var(--espacio-4); }
+.principios { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espacio-3); }
+.principios li { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: var(--espacio-3); align-items: baseline; }
+.principios .n { font-family: var(--fuente-cifras); color: var(--color-acento); }
+.principios strong { font-weight: 600; }
+
+/* Secciones */
+.seccion { display: grid; gap: var(--espacio-6); }
+.seccion-titulo { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--espacio-2) var(--espacio-4); }
+.seccion-titulo h2 { font-size: var(--texto-xl); }
+.rejilla { display: grid; gap: var(--espacio-4); }
+
+/* Color */
+.paleta { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.muestra { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); overflow: hidden; display: grid; }
+.muestra .chip { height: 72px; border-bottom: var(--borde); display: flex; align-items: flex-end; padding: var(--espacio-3); font-family: var(--fuente-titulo); font-weight: 600; }
+.muestra .datos { padding: var(--espacio-3); display: grid; gap: var(--espacio-1); }
+.muestra .uso { font-size: var(--texto-sm); color: var(--color-texto-suave); }
+.estados-color { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.par { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-4); display: grid; gap: var(--espacio-3); }
+.par .franja { display: grid; grid-template-columns: 1fr 1fr; border-radius: var(--radio-sm); overflow: hidden; height: 56px; }
+.par .franja span { display: flex; align-items: center; justify-content: center; font-family: var(--fuente-titulo); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: var(--texto-xs); }
+
+/* Tipografía */
+.tipos { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.tipo { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-6); display: grid; gap: var(--espacio-3); align-content: start; }
+.tipo .especimen { font-size: 2.5rem; line-height: 1.1; }
+.escala { display: grid; gap: var(--espacio-2); background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-6); }
+.escala-fila { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: var(--espacio-4); align-items: baseline; border-bottom: var(--borde); padding-bottom: var(--espacio-2); }
+.escala-fila:last-child { border-bottom: 0; padding-bottom: 0; }
+
+/* Espaciado */
+.espacios { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-6); display: grid; gap: var(--espacio-2); }
+.espacio-fila { display: grid; grid-template-columns: 8.5rem 3rem minmax(0, 1fr); gap: var(--espacio-4); align-items: center; }
+.espacio-fila .barra { height: 12px; background: var(--color-acento); border-radius: 2px; }
+.radios { display: flex; flex-wrap: wrap; gap: var(--espacio-6); margin-top: var(--espacio-4); }
+.radio-ej { display: grid; gap: var(--espacio-2); justify-items: start; }
+.radio-ej .caja { width: 96px; height: 56px; background: var(--color-superficie-alta); border: 1px solid var(--color-borde-control); }
+
+/* Componentes */
+.componentes { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+.panel { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-6); display: grid; gap: var(--espacio-4); }
+.panel h3 { font-size: var(--texto-lg); }
+.fila { display: flex; flex-wrap: wrap; gap: var(--espacio-3); align-items: center; }
+
+.boton {
+  min-height: 40px; padding: 0 var(--espacio-4); border-radius: var(--radio-sm);
+  font: 600 var(--texto-base)/1 var(--fuente-texto); cursor: pointer;
+  transition: background-color var(--duracion-corta) ease-out, border-color var(--duracion-corta) ease-out;
+}
+.boton--primario { background: var(--color-acento); color: var(--color-sobre-acento); border: 1px solid var(--color-acento); }
+.boton--secundario { background: transparent; color: var(--color-texto); border: 1px solid var(--color-borde-control); }
+.boton:disabled { opacity: 0.6; cursor: not-allowed; }
+.boton:focus-visible, .campo-control:focus-visible { outline: 2px solid var(--color-acento); outline-offset: 2px; }
+
+.campo { display: grid; gap: var(--espacio-1); }
+.campo label { font-size: var(--texto-sm); font-weight: 600; }
+.campo-control {
+  min-height: 40px; width: 100%; padding: 0 var(--espacio-3);
+  background: var(--color-superficie-alta); color: var(--color-texto);
+  border: 1px solid var(--color-borde-control); border-radius: var(--radio-sm);
+  font: 400 var(--texto-base)/1.5 var(--fuente-texto);
+}
+.campo-control:focus { border-color: var(--color-acento); }
+.campo--foco .campo-control { border-color: var(--color-acento); outline: 2px solid var(--color-acento); outline-offset: 2px; }
+.campo--error .campo-control { border-color: var(--color-no-apta); }
+.campo-error { font-size: var(--texto-sm); color: var(--color-no-apta); }
+
+.insignia {
+  display: inline-flex; align-items: center; min-height: 24px; padding: 0 var(--espacio-2);
+  border-radius: var(--radio-sm); font: 600 var(--texto-xs)/1 var(--fuente-titulo);
+  letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+}
+.insignia--apta { color: var(--color-apta); background: var(--color-apta-fondo); }
+.insignia--no-apta { color: var(--color-no-apta); background: var(--color-no-apta-fondo); }
+.insignia--reparacion { color: var(--color-reparacion); background: var(--color-reparacion-fondo); }
+
+.combustible { display: grid; gap: var(--espacio-1); }
+.combustible-fila { display: grid; grid-template-columns: minmax(0, 1fr) 3.5rem; gap: var(--espacio-3); align-items: center; }
+.pista { position: relative; height: 8px; background: var(--color-superficie-alta); border-radius: 2px; }
+.relleno { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--color-apta); }
+.relleno--bajo { background: var(--color-no-apta); }
+.umbral { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--color-texto-suave); left: 25%; }
+.combustible-fila .cifra { text-align: right; }
+
+.contador { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--espacio-2); }
+.marcas { display: inline-flex; gap: var(--espacio-1); align-items: center; }
+.marca { width: 10px; height: 10px; border: 1px solid var(--color-texto-suave); border-radius: 1px; }
+.marca--ocupada { background: var(--color-texto); border-color: var(--color-texto); }
+.contador-valor { display: inline-flex; gap: var(--espacio-2); align-items: center; }
+
+.aviso { border-radius: var(--radio-sm); padding: var(--espacio-3) var(--espacio-4); font-size: var(--texto-sm); }
+.aviso--exito { background: var(--color-apta-fondo); border: 1px solid var(--color-apta); }
+.aviso--error { background: var(--color-no-apta-fondo); border: 1px solid var(--color-no-apta); }
+
+/* Tarjetas */
+.flota { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espacio-4); grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.tarjeta-nave { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-4); display: grid; gap: var(--espacio-3); align-content: start; }
+.tarjeta-cabecera { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--espacio-3); }
+.tarjeta-cabecera h3 { font-size: var(--texto-lg); }
+.clase { font-family: var(--fuente-cifras); font-size: var(--texto-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-texto-suave); }
+.motivos { margin: 0; padding-left: var(--espacio-4); font-size: var(--texto-sm); color: var(--color-texto-suave); display: grid; gap: var(--espacio-1); }
+.divisor { border: 0; border-top: var(--borde); margin: 0; }
+
+/* Estados */
+.estados { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.estado-vacio { border: 1px dashed var(--color-borde-control); border-radius: var(--radio-md); padding: var(--espacio-6); text-align: center; color: var(--color-texto-suave); font-size: var(--texto-sm); }
+
+/* Layout */
+.esquemas { grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); align-items: start; }
+.esquema { background: var(--color-superficie); border: var(--borde); border-radius: var(--radio-md); padding: var(--espacio-4); display: grid; gap: var(--espacio-3); }
+.zona { border: 1px dashed var(--color-borde-control); border-radius: var(--radio-sm); padding: var(--espacio-3); font-size: var(--texto-sm); color: var(--color-texto-suave); display: grid; gap: var(--espacio-2); align-content: start; }
+.zona strong { color: var(--color-texto); font-family: var(--fuente-titulo); font-weight: 600; }
+.tablero { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr); gap: var(--espacio-3); }
+.mini-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--espacio-2); }
+.mini-tarjeta { height: 44px; background: var(--color-superficie-alta); border-radius: var(--radio-sm); }
+.angosto { max-width: 220px; justify-self: center; width: 100%; }
+.angosto .mini-grid { grid-template-columns: 1fr; }
+
+/* Reglas */
+.reglas { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.lista-regla { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espacio-3); font-size: var(--texto-sm); }
+.lista-regla li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); gap: var(--espacio-2); }
+.lista-regla .sigil { font-family: var(--fuente-cifras); font-weight: 600; }
+.haz .sigil { color: var(--color-apta); }
+.no-hagas .sigil { color: var(--color-no-apta); }
+
+/* Criterios */
+.tabla-envoltura { overflow-x: auto; border: var(--borde); border-radius: var(--radio-md); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: var(--texto-sm); }
+th, td { text-align: left; padding: var(--espacio-3) var(--espacio-4); border-bottom: var(--borde); vertical-align: top; }
+th { font-family: var(--fuente-titulo); font-size: var(--texto-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-texto-suave); background: var(--color-superficie); }
+tr:last-child td { border-bottom: 0; }
+td.cifra { color: var(--color-acento); white-space: nowrap; }
+
+.pie { border-top: var(--borde); padding-top: var(--espacio-6); font-size: var(--texto-sm); color: var(--color-texto-suave); display: grid; gap: var(--espacio-2); }
+
+@media (max-width: 900px) {
+  .cabecera, .esquemas { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .escala-fila, .espacio-fila { grid-template-columns: 6.5rem minmax(0, 1fr); }
+  .espacio-fila .cifra { display: none; }
+  .tablero { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+  <header class="cabecera">
+    <div>
+      <p class="etiqueta">Hangar Orbital · DESIGN.md v1.0</p>
+      <h1>Consola de Hangar</h1>
+      <p class="lema">Sistema de diseño del control de despegues.</p>
+      <div class="meta">
+        <span class="insignia insignia--apta">Apta</span>
+        <span class="insignia insignia--no-apta">No apta</span>
+        <span class="insignia insignia--reparacion">En reparación</span>
+      </div>
+    </div>
+    <ol class="principios" aria-label="Principios de diseño">
+      <li><span class="n">01</span><p><strong>La aptitud se lee de un vistazo.</strong> <span class="suave">Primero si la nave puede despegar; el detalle después.</span></p></li>
+      <li><span class="n">02</span><p><strong>Nunca solo color.</strong> <span class="suave">Todo estado lleva su texto.</span></p></li>
+      <li><span class="n">03</span><p><strong>Densidad de consola.</strong> <span class="suave">Cifras en mono, alineadas para compararse.</span></p></li>
+      <li><span class="n">04</span><p><strong>Un solo acento.</strong> <span class="suave">El cian marca lo que se puede hacer; rojo, verde y ámbar, solo estados.</span></p></li>
+      <li><span class="n">05</span><p><strong>Plano y en calma.</strong> <span class="suave">Sin sombras, gradientes ni animación decorativa.</span></p></li>
+    </ol>
+  </header>
+
+  <section class="seccion" aria-labelledby="t-color">
+    <div class="seccion-titulo"><h2 id="t-color">Color</h2><p class="suave">Tema oscuro único. Todos los contrastes cumplen WCAG AA.</p></div>
+    <div class="rejilla paleta">
+      <div class="muestra"><div class="chip" style="background:#0E1420">Aa</div><div class="datos"><code>--color-fondo</code><span class="cifra">#0E1420</span><span class="uso">Fondo de la página</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#161E2E">Aa</div><div class="datos"><code>--color-superficie</code><span class="cifra">#161E2E</span><span class="uso">Paneles y tarjetas · texto 14,3:1</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#1F2A3F">Aa</div><div class="datos"><code>--color-superficie-alta</code><span class="cifra">#1F2A3F</span><span class="uso">Campos y elementos sobre tarjeta</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#2C3A54">Aa</div><div class="datos"><code>--color-borde</code><span class="cifra">#2C3A54</span><span class="uso">Separadores decorativos</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#6B7C9E;color:#0E1420">Aa</div><div class="datos"><code>--color-borde-control</code><span class="cifra">#6B7C9E</span><span class="uso">Borde de campos · 3,4:1</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#E8EEF7;color:#0E1420">Aa</div><div class="datos"><code>--color-texto</code><span class="cifra">#E8EEF7</span><span class="uso">Texto principal</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#A3B1C8;color:#0E1420">Aa</div><div class="datos"><code>--color-texto-suave</code><span class="cifra">#A3B1C8</span><span class="uso">Secundario · 7,7:1</span></div></div>
+      <div class="muestra"><div class="chip" style="background:#6CC4FF;color:#0E1420">Aa</div><div class="datos"><code>--color-acento</code><span class="cifra">#6CC4FF</span><span class="uso">Botón, foco, enlaces · 9,6:1</span></div></div>
+    </div>
+    <div class="rejilla estados-color">
+      <div class="par">
+        <div class="franja"><span style="background:#46D39A;color:#0E1420">#46D39A</span><span style="background:#163A2F;color:#46D39A">#163A2F</span></div>
+        <div><code>--color-apta</code> · <code>--color-apta-fondo</code></div>
+        <p class="suave" style="font-size:var(--texto-sm)">«Apta», combustible suficiente, aviso de éxito · 6,6:1</p>
+      </div>
+      <div class="par">
+        <div class="franja"><span style="background:#FF6B6B;color:#0E1420">#FF6B6B</span><span style="background:#3D1E26;color:#FF6B6B">#3D1E26</span></div>
+        <div><code>--color-no-apta</code> · <code>--color-no-apta-fondo</code></div>
+        <p class="suave" style="font-size:var(--texto-sm)">«No apta», combustible bajo, errores · 5,4:1</p>
+      </div>
+      <div class="par">
+        <div class="franja"><span style="background:#F2B84B;color:#0E1420">#F2B84B</span><span style="background:#3A2E17;color:#F2B84B">#3A2E17</span></div>
+        <div><code>--color-reparacion</code> · <code>--color-reparacion-fondo</code></div>
+        <p class="suave" style="font-size:var(--texto-sm)">«En reparación» · 7,4:1</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-tipo">
+    <div class="seccion-titulo"><h2 id="t-tipo">Tipografía</h2><p class="suave">IBM Plex en tres variantes, desde Google Fonts.</p></div>
+    <div class="rejilla tipos">
+      <div class="tipo">
+        <code>--fuente-titulo</code>
+        <p class="especimen" style="font-family:var(--fuente-titulo);font-weight:600">Aurora · Carguera</p>
+        <p class="suave" style="font-size:var(--texto-sm)">IBM Plex Sans Condensed 600. Títulos, nombres de nave y etiquetas.</p>
+      </div>
+      <div class="tipo">
+        <code>--fuente-texto</code>
+        <p class="especimen" style="font-family:var(--fuente-texto);font-size:1.5rem;line-height:1.35">Misión a Estación Kepler asignada a «Aurora».</p>
+        <p class="suave" style="font-size:var(--texto-sm)">IBM Plex Sans 400 y 600. Texto, campos y botones.</p>
+      </div>
+      <div class="tipo">
+        <code>--fuente-cifras</code>
+        <p class="especimen cifra" style="font-size:2rem">62 % · 2 de 3</p>
+        <p class="suave" style="font-size:var(--texto-sm)">IBM Plex Mono con cifras tabulares. Porcentajes, conteos y fechas.</p>
+      </div>
+    </div>
+    <div class="escala" aria-label="Escala tipográfica">
+      <div class="escala-fila"><code>--texto-xl</code><span style="font-family:var(--fuente-titulo);font-weight:600;font-size:var(--texto-xl)">Hangar Orbital <span class="suave cifra" style="font-size:var(--texto-sm)">28 px</span></span></div>
+      <div class="escala-fila"><code>--texto-lg</code><span style="font-family:var(--fuente-titulo);font-weight:600;font-size:var(--texto-lg)">Registrar nave <span class="suave cifra" style="font-size:var(--texto-sm)">20 px</span></span></div>
+      <div class="escala-fila"><code>--texto-base</code><span>Elige la clase de la nave. <span class="suave cifra" style="font-size:var(--texto-sm)">16 px</span></span></div>
+      <div class="escala-fila"><code>--texto-sm</code><span style="font-size:var(--texto-sm)">Combustible insuficiente: necesita al menos un 25 %. <span class="suave cifra">14 px</span></span></div>
+      <div class="escala-fila"><code>--texto-xs</code><span class="etiqueta">Combustible · Clase · 12 px</span></div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-espacio">
+    <div class="seccion-titulo"><h2 id="t-espacio">Espaciado y radios</h2><p class="suave">Escala de 4 px. Los grupos se separan con <code>gap</code>.</p></div>
+    <div class="espacios">
+      <div class="espacio-fila"><code>--espacio-1</code><span class="cifra suave">4</span><span class="barra" style="width:4px"></span></div>
+      <div class="espacio-fila"><code>--espacio-2</code><span class="cifra suave">8</span><span class="barra" style="width:8px"></span></div>
+      <div class="espacio-fila"><code>--espacio-3</code><span class="cifra suave">12</span><span class="barra" style="width:12px"></span></div>
+      <div class="espacio-fila"><code>--espacio-4</code><span class="cifra suave">16</span><span class="barra" style="width:16px"></span></div>
+      <div class="espacio-fila"><code>--espacio-6</code><span class="cifra suave">24</span><span class="barra" style="width:24px"></span></div>
+      <div class="espacio-fila"><code>--espacio-8</code><span class="cifra suave">32</span><span class="barra" style="width:32px"></span></div>
+      <div class="espacio-fila"><code>--espacio-12</code><span class="cifra suave">48</span><span class="barra" style="width:48px"></span></div>
+      <div class="radios">
+        <div class="radio-ej"><span class="caja" style="border-radius:var(--radio-sm)"></span><code>--radio-sm · 4 px</code><span class="suave" style="font-size:var(--texto-sm)">Insignias, campos, botones</span></div>
+        <div class="radio-ej"><span class="caja" style="border-radius:var(--radio-md)"></span><code>--radio-md · 8 px</code><span class="suave" style="font-size:var(--texto-sm)">Tarjetas y paneles</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-comp">
+    <div class="seccion-titulo"><h2 id="t-comp">Componentes</h2><p class="suave">Clases en español y kebab-case, en <code>src/styles/</code>.</p></div>
+    <div class="rejilla componentes">
+      <div class="panel">
+        <h3>Botón</h3>
+        <div class="fila">
+          <button class="boton boton--primario" type="button">Registrar nave</button>
+          <button class="boton boton--secundario" type="button">Limpiar</button>
+          <button class="boton boton--primario" type="button" disabled>Registrando…</button>
+        </div>
+        <p class="suave" style="font-size:var(--texto-sm)">Primario, secundario y enviando. Alto mínimo 40 px; el ancho no cambia al enviar.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Campo de formulario</h3>
+        <div class="campo">
+          <label for="ej-nombre">Nombre</label>
+          <input class="campo-control" id="ej-nombre" type="text" value="Aurora">
+        </div>
+        <div class="campo campo--foco">
+          <label for="ej-destino">Destino</label>
+          <input class="campo-control" id="ej-destino" type="text" value="Estación Kepler">
+        </div>
+        <div class="campo campo--error">
+          <label for="ej-combustible">Combustible (%)</label>
+          <input class="campo-control cifra" id="ej-combustible" type="text" value="120" aria-invalid="true" aria-describedby="ej-combustible-error">
+          <p class="campo-error" id="ej-combustible-error">El combustible debe ser un número entero entre 0 y 100.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Insignia de estado</h3>
+        <div class="fila">
+          <span class="insignia insignia--apta">Apta</span>
+          <span class="insignia insignia--no-apta">No apta</span>
+          <span class="insignia insignia--reparacion">En reparación</span>
+        </div>
+        <p class="suave" style="font-size:var(--texto-sm)">Texto obligatorio. «Operativa» no lleva insignia: solo se destaca lo excepcional.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Barra de combustible</h3>
+        <div class="combustible">
+          <span class="etiqueta">Combustible</span>
+          <div class="combustible-fila"><div class="pista" role="meter" aria-label="Combustible" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"><span class="relleno" style="width:80%"></span><span class="umbral"></span></div><span class="cifra">80 %</span></div>
+        </div>
+        <div class="combustible">
+          <div class="combustible-fila"><div class="pista" role="meter" aria-label="Combustible" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25"><span class="relleno" style="width:25%"></span><span class="umbral"></span></div><span class="cifra">25 %</span></div>
+        </div>
+        <div class="combustible">
+          <div class="combustible-fila"><div class="pista" role="meter" aria-label="Combustible" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10"><span class="relleno relleno--bajo" style="width:10%"></span><span class="umbral"></span></div><span class="cifra">10 %</span></div>
+        </div>
+        <p class="suave" style="font-size:var(--texto-sm)">La marca indica <code>COMBUSTIBLE_MINIMO</code>, importado del dominio. Por debajo, el relleno pasa a rojo.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Contador de misiones</h3>
+        <div class="contador"><span class="etiqueta">Misiones desde la revisión</span><span class="contador-valor"><span class="marcas" aria-hidden="true"><span class="marca"></span><span class="marca"></span><span class="marca"></span></span><span class="cifra">0 de 3</span></span></div>
+        <div class="contador"><span class="etiqueta">Misiones desde la revisión</span><span class="contador-valor"><span class="marcas" aria-hidden="true"><span class="marca marca--ocupada"></span><span class="marca marca--ocupada"></span><span class="marca"></span></span><span class="cifra">2 de 3</span></span></div>
+        <div class="contador"><span class="etiqueta">Misiones desde la revisión</span><span class="contador-valor"><span class="marcas" aria-hidden="true"><span class="marca marca--ocupada"></span><span class="marca marca--ocupada"></span><span class="marca marca--ocupada"></span></span><span class="cifra">3 de 3</span></span></div>
+        <p class="suave" style="font-size:var(--texto-sm)">Tantas marcas como <code>MAX_MISIONES_SIN_REVISION</code>. Si la regla cambia, la interfaz cambia sola.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Avisos</h3>
+        <p class="aviso aviso--exito" role="status">Nave «Aurora» registrada.</p>
+        <p class="aviso aviso--error">No se pudo registrar la nave. Inténtalo de nuevo.</p>
+        <p class="suave" style="font-size:var(--texto-sm)">Éxito con <code>role="status"</code>; error con <code>role="alert"</code>. Debajo del botón que los produjo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-tarjeta">
+    <div class="seccion-titulo"><h2 id="t-tarjeta">Tarjeta de nave</h2><p class="suave">Orden fijo: nombre y aptitud, clase, combustible, misiones, estado y motivos.</p></div>
+    <ul class="flota">
+      <li class="tarjeta-nave">
+        <div class="tarjeta-cabecera"><h3>Aurora</h3><span class="insignia insignia--apta">Apta</span></div>
+        <span class="clase">Carguera</span>
+        <div class="combustible-fila"><div class="pista" role="meter" aria-label="Combustible" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"><span class="relleno" style="width:80%"></span><span class="umbral"></span></div><span class="cifra">80 %</span></div>
+        <div class="contador"><span class="etiqueta">Misiones desde la revisión</span><span class="contador-valor"><span class="marcas" aria-hidden="true"><span class="marca marca--ocupada"></span><span class="marca"></span><span class="marca"></span></span><span class="cifra">1 de 3</span></span></div>
+        <hr class="divisor">
+        <span class="suave" style="font-size:var(--texto-sm)">Operativa</span>
+      </li>
+      <li class="tarjeta-nave">
+        <div class="tarjeta-cabecera"><h3>Ceniza</h3><span class="insignia insignia--no-apta">No apta</span></div>
+        <span class="clase">Exploradora</span>
+        <div class="combustible-fila"><div class="pista" role="meter" aria-label="Combustible" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10"><span class="relleno relleno--bajo" style="width:10%"></span><span class="umbral"></span></div><span class="cifra">10 %</span></div>
+        <div class="contador"><span class="etiqueta">Misiones desde la revisión</span><span class="contador-valor"><span class="marcas" aria-hidden="true"><span class="marca"></span><span class="marca"></span><span class="marca"></span></span><span class="cifra">0 de 3</span></span></div>
+        <hr class="divisor">
+        <span class="suave" style="font-size:var(--texto-sm)">Operativa</span>
+        <ul class="motivos"><li>Combustible insuficiente: necesita al menos un 25 %.</li></ul>
+      </li>
+      <li class="tarjeta-nave">
+        <div class="tarjeta-cabecera"><h3>Duna</h3><span class="insignia insignia--no-apta">No apta</span></div>
+        <span class="clase">Transporte</span>
+        <div class="combustible-fila"><div class="pista" role="meter" aria-label="Combustible" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25"><span class="relleno" style="width:25%"></span><span class="umbral"></span></div><span class="cifra">25 %</span></div>
+        <div class="contador"><span class="etiqueta">Misiones desde la revisión</span><span class="contador-valor"><span class="marcas" aria-hidden="true"><span class="marca marca--ocupada"></span><span class="marca marca--ocupada"></span><span class="marca"></span></span><span class="cifra">2 de 3</span></span></div>
+        <hr class="divisor">
+        <span><span class="insignia insignia--reparacion">En reparación</span></span>
+        <ul class="motivos"><li>La nave está en reparación.</li></ul>
+      </li>
+    </ul>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-estados">
+    <div class="seccion-titulo"><h2 id="t-estados">Estados de la flota</h2><p class="suave">Mismos textos de la spec 01.</p></div>
+    <div class="rejilla estados">
+      <div class="panel"><span class="etiqueta">Cargando</span><p class="suave">Cargando la flota…</p></div>
+      <div class="panel"><span class="etiqueta">Vacío</span><p class="estado-vacio">Todavía no hay naves registradas.</p></div>
+      <div class="panel"><span class="etiqueta">Error</span><p class="aviso aviso--error">No se pudo cargar la flota.</p></div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-layout">
+    <div class="seccion-titulo"><h2 id="t-layout">Layout</h2><p class="suave">Máximo 1200 px. Dos columnas desde 900 px; una por debajo, en el mismo orden.</p></div>
+    <div class="rejilla esquemas">
+      <div class="esquema" aria-label="Tablero a partir de 900 px">
+        <span class="etiqueta">Desde 900 px</span>
+        <div class="zona"><strong>Hangar Orbital</strong>Control de despegues</div>
+        <div class="tablero">
+          <div class="rejilla" style="gap:var(--espacio-3)">
+            <div class="zona"><strong>Registrar nave</strong><span class="cifra">360 px</span></div>
+            <div class="zona"><strong>Asignar misión</strong><span class="cifra">360 px</span></div>
+          </div>
+          <div class="zona"><strong>Flota</strong><span class="cifra">minmax(260px, 1fr)</span>
+            <div class="mini-grid"><span class="mini-tarjeta"></span><span class="mini-tarjeta"></span><span class="mini-tarjeta"></span><span class="mini-tarjeta"></span><span class="mini-tarjeta"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="esquema angosto" aria-label="Pantalla angosta, por debajo de 900 px">
+        <span class="etiqueta">Menos de 900 px</span>
+        <div class="zona"><strong>Encabezado</strong></div>
+        <div class="zona"><strong>Registrar nave</strong></div>
+        <div class="zona"><strong>Asignar misión</strong></div>
+        <div class="zona"><strong>Flota</strong><div class="mini-grid"><span class="mini-tarjeta"></span><span class="mini-tarjeta"></span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-reglas">
+    <div class="seccion-titulo"><h2 id="t-reglas">Reglas para el agente</h2></div>
+    <div class="rejilla reglas">
+      <div class="panel haz">
+        <h3>Haz</h3>
+        <ul class="lista-regla">
+          <li><span class="sigil">+</span><span>Usa solo tokens: <code>var(--color-…)</code>, <code>var(--espacio-…)</code>, <code>var(--texto-…)</code>.</span></li>
+          <li><span class="sigil">+</span><span>Escribe CSS plano en <code>src/styles/</code> e impórtalo desde <code>src/main.tsx</code>.</span></li>
+          <li><span class="sigil">+</span><span>Importa los umbrales desde <code>src/dominio/aptitud.ts</code>.</span></li>
+          <li><span class="sigil">+</span><span>Conserva los textos de la spec 01, carácter por carácter.</span></li>
+          <li><span class="sigil">+</span><span>Comprueba a 1280 px y a 390 px de ancho.</span></li>
+        </ul>
+      </div>
+      <div class="panel no-hagas">
+        <h3>No hagas</h3>
+        <ul class="lista-regla">
+          <li><span class="sigil">−</span><span>Colores hexadecimales fuera de <code>tokens.css</code>.</span></li>
+          <li><span class="sigil">−</span><span>Tailwind, librerías de componentes, CSS-in-JS o estilos en línea.</span></li>
+          <li><span class="sigil">−</span><span>Tocar <code>src/dominio/</code>, <code>src/services/</code> o <code>supabase/</code> en una tarea visual.</span></li>
+          <li><span class="sigil">−</span><span>Usar el color como única señal de un estado.</span></li>
+          <li><span class="sigil">−</span><span>Sombras, gradientes, fuentes nuevas o iconos de librerías.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-criterios">
+    <div class="seccion-titulo"><h2 id="t-criterios">Criterios verificables</h2><p class="suave">La spec de interfaz los cita por su id.</p></div>
+    <div class="tabla-envoltura">
+      <table>
+        <thead><tr><th>Id</th><th>Criterio</th><th>Cómo se comprueba</th></tr></thead>
+        <tbody>
+          <tr><td class="cifra">D-01</td><td>Ningún archivo de <code>src/</code> fuera de <code>tokens.css</code> contiene un color hexadecimal.</td><td>Comando <code>grep</code></td></tr>
+          <tr><td class="cifra">D-02</td><td>No hay estilos en línea, salvo el ancho de la barra de combustible.</td><td>Comando <code>grep</code></td></tr>
+          <tr><td class="cifra">D-03</td><td>Cada nave muestra su aptitud con insignia y texto, arriba a la derecha de su tarjeta.</td><td>Navegador</td></tr>
+          <tr><td class="cifra">D-04</td><td>Una nave no apta muestra sus motivos con los textos de <code>MENSAJES_MOTIVO</code>.</td><td>Navegador</td></tr>
+          <tr><td class="cifra">D-05</td><td>La barra marca el umbral y se pinta en rojo por debajo de él.</td><td>Navegador, con naves al 10 % y al 25 %</td></tr>
+          <tr><td class="cifra">D-06</td><td>El contador muestra «n de 3» y tantas marcas como el máximo del dominio.</td><td>Navegador y código</td></tr>
+          <tr><td class="cifra">D-07</td><td>Al recorrer la app con Tab, todo control muestra el foco en cian.</td><td>Navegador, solo teclado</td></tr>
+          <tr><td class="cifra">D-08</td><td>Un campo con error tiene borde rojo, mensaje debajo y <code>aria-invalid="true"</code>.</td><td>Navegador e inspector</td></tr>
+          <tr><td class="cifra">D-09</td><td>A 1280 px hay dos columnas; a 390 px, una, sin scroll horizontal.</td><td>Modo responsive</td></tr>
+          <tr><td class="cifra">D-10</td><td>Los textos visibles coinciden con los de la spec 01.</td><td>Contra <code>docs/VERIFICACION.md</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <p>Este tablero ilustra <code>DESIGN.md</code>, en la raíz del repositorio de Hangar Orbital. Si los dos difieren, gana <code>DESIGN.md</code>.</p>
+    <p>Las naves de ejemplo (Aurora, Ceniza, Duna) son las de <code>docs/VERIFICACION.md</code>.</p>
+  </footer>
+
+</div>
+</body>
+</html>
