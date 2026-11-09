@@ -19,12 +19,12 @@ describe('puedeRecibirMision', () => {
     });
   });
 
-  it('acepta una nave con exactamente 3 misiones desde la última revisión', () => {
-    expect(puedeRecibirMision(operativa, 3)).toEqual({ puede: true });
+  it('acepta una nave con exactamente 2 misiones desde la última revisión', () => {
+    expect(puedeRecibirMision(operativa, 2)).toEqual({ puede: true });
   });
 
-  it('rechaza una nave con 4 misiones desde la última revisión', () => {
-    expect(puedeRecibirMision(operativa, 4)).toEqual({
+  it('rechaza una nave con 3 misiones desde la última revisión', () => {
+    expect(puedeRecibirMision(operativa, 3)).toEqual({
       puede: false,
       motivos: ['revision_pendiente'],
     });
@@ -37,15 +37,15 @@ describe('puedeRecibirMision', () => {
     });
   });
 
-  it('devuelve los dos motivos con poco combustible y 4 misiones', () => {
-    expect(puedeRecibirMision({ ...operativa, combustible: 10 }, 4)).toEqual({
+  it('devuelve los dos motivos con poco combustible y 3 misiones', () => {
+    expect(puedeRecibirMision({ ...operativa, combustible: 10 }, 3)).toEqual({
       puede: false,
       motivos: ['combustible_insuficiente', 'revision_pendiente'],
     });
   });
 
   it('devuelve los tres motivos en el orden de la spec', () => {
-    expect(puedeRecibirMision({ combustible: 10, enReparacion: true }, 4)).toEqual({
+    expect(puedeRecibirMision({ combustible: 10, enReparacion: true }, 3)).toEqual({
       puede: false,
       motivos: ['combustible_insuficiente', 'revision_pendiente', 'en_reparacion'],
     });
@@ -56,7 +56,7 @@ describe('MENSAJES_MOTIVO', () => {
   it('tiene un mensaje para cada motivo', () => {
     expect(MENSAJES_MOTIVO).toEqual({
       combustible_insuficiente: 'Combustible insuficiente: necesita al menos un 25 %.',
-      revision_pendiente: 'Necesita revisión: lleva más de 3 misiones desde la última.',
+      revision_pendiente: 'Necesita revisión: ya tiene 3 misiones desde la última.',
       en_reparacion: 'La nave está en reparación.',
     });
   });

@@ -9,23 +9,30 @@ export default function App() {
   const recargar = () => setVersion((v) => v + 1);
 
   return (
-    <main>
-      <h1>Hangar Orbital</h1>
+    <div className="contenedor">
+      <header>
+        <h1>Hangar Orbital</h1>
+        <p className="encabezado-subtitulo">Control de despegues</p>
+      </header>
 
-      <section>
-        <h2>Registrar nave</h2>
-        <FormularioNave onRegistrada={recargar} />
-      </section>
+      <main className="tablero">
+        <div className="columna-formularios">
+          <section className="panel">
+            <h2>Registrar nave</h2>
+            <FormularioNave onRegistrada={recargar} />
+          </section>
 
-      <section>
-        <h2>Asignar misión</h2>
-        <FormularioMision version={version} onAsignada={recargar} />
-      </section>
+          <section className="panel">
+            <h2>Asignar misión</h2>
+            <FormularioMision version={version} onAsignada={recargar} />
+          </section>
+        </div>
 
-      <section>
-        <h2>Flota</h2>
-        <ListaNaves version={version} />
-      </section>
-    </main>
+        <section className="seccion-flota">
+          <h2>Flota</h2>
+          <ListaNaves version={version} />
+        </section>
+      </main>
+    </div>
   );
 }

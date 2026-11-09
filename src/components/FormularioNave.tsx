@@ -48,21 +48,40 @@ export default function FormularioNave({ onRegistrada }: Props) {
   return (
     // noValidate: los mensajes los da validarNave, no el navegador
     <form
+      className="formulario"
       noValidate
       onSubmit={(evento) => {
         evento.preventDefault();
         void registrar();
       }}
     >
-      <p>
+      <div className="campo">
         <label htmlFor="nave-nombre">Nombre</label>
-        <input id="nave-nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-        {errores.nombre && <span role="alert">{errores.nombre}</span>}
-      </p>
+        <input
+          id="nave-nombre"
+          className="campo-control"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          aria-invalid={errores.nombre ? true : undefined}
+          aria-describedby={errores.nombre ? 'nave-nombre-error' : undefined}
+        />
+        {errores.nombre && (
+          <span id="nave-nombre-error" className="campo-error" role="alert">
+            {errores.nombre}
+          </span>
+        )}
+      </div>
 
-      <p>
+      <div className="campo">
         <label htmlFor="nave-clase">Clase</label>
-        <select id="nave-clase" value={clase} onChange={(e) => setClase(e.target.value)}>
+        <select
+          id="nave-clase"
+          className="campo-control"
+          value={clase}
+          onChange={(e) => setClase(e.target.value)}
+          aria-invalid={errores.clase ? true : undefined}
+          aria-describedby={errores.clase ? 'nave-clase-error' : undefined}
+        >
           <option value="">Elige una clase</option>
           {CLASES_NAVE.map((c) => (
             <option key={c} value={c}>
@@ -70,27 +89,45 @@ export default function FormularioNave({ onRegistrada }: Props) {
             </option>
           ))}
         </select>
-        {errores.clase && <span role="alert">{errores.clase}</span>}
-      </p>
+        {errores.clase && (
+          <span id="nave-clase-error" className="campo-error" role="alert">
+            {errores.clase}
+          </span>
+        )}
+      </div>
 
-      <p>
+      <div className="campo">
         <label htmlFor="nave-combustible">Combustible (%)</label>
         <input
           id="nave-combustible"
+          className="campo-control campo-control--cifra"
           type="number"
           min={0}
           max={100}
           step={1}
           value={combustible}
           onChange={(e) => setCombustible(e.target.value)}
+          aria-invalid={errores.combustible ? true : undefined}
+          aria-describedby={errores.combustible ? 'nave-combustible-error' : undefined}
         />
-        {errores.combustible && <span role="alert">{errores.combustible}</span>}
-      </p>
+        {errores.combustible && (
+          <span id="nave-combustible-error" className="campo-error" role="alert">
+            {errores.combustible}
+          </span>
+        )}
+      </div>
 
-      <button type="submit" disabled={enviando}>
+      <button className="boton boton--primario" type="submit" disabled={enviando}>
         Registrar nave
       </button>
-      {aviso && <p role={aviso.tipo === 'error' ? 'alert' : 'status'}>{aviso.texto}</p>}
+      {aviso && (
+        <p
+          className={`aviso aviso--${aviso.tipo}`}
+          role={aviso.tipo === 'error' ? 'alert' : 'status'}
+        >
+          {aviso.texto}
+        </p>
+      )}
     </form>
   );
 }

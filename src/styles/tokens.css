@@ -1,0 +1,46 @@
+/* Tokens de «Consola de Hangar». La fuente de verdad es DESIGN.md §4: se cambian los dos a la vez. */
+:root {
+  color-scheme: dark;
+
+  /* Color */
+  --color-fondo: #0e1420;
+  --color-superficie: #161e2e;
+  --color-superficie-alta: #1f2a3f;
+  --color-borde: #2c3a54;
+  --color-borde-control: #6b7c9e;
+  --color-texto: #e8eef7;
+  --color-texto-suave: #a3b1c8;
+  --color-acento: #6cc4ff;
+  --color-sobre-acento: #0e1420;
+  --color-apta: #46d39a;
+  --color-apta-fondo: #163a2f;
+  --color-no-apta: #ff6b6b;
+  --color-no-apta-fondo: #3d1e26;
+  --color-reparacion: #f2b84b;
+  --color-reparacion-fondo: #3a2e17;
+
+  /* Tipografía */
+  --fuente-titulo: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
+  --fuente-texto: 'IBM Plex Sans', system-ui, sans-serif;
+  --fuente-cifras: 'IBM Plex Mono', ui-monospace, monospace;
+  --texto-xl: 1.75rem;
+  --texto-lg: 1.25rem;
+  --texto-base: 1rem;
+  --texto-sm: 0.875rem;
+  --texto-xs: 0.75rem;
+
+  /* Espaciado, radios y bordes */
+  --espacio-1: 4px;
+  --espacio-2: 8px;
+  --espacio-3: 12px;
+  --espacio-4: 16px;
+  --espacio-6: 24px;
+  --espacio-8: 32px;
+  --espacio-12: 48px;
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --borde: 1px solid var(--color-borde);
+
+  /* Movimiento */
+  --duracion-corta: 120ms;
+}

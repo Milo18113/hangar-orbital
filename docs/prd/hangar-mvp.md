@@ -27,7 +27,7 @@ De 3 a 5 jefes de hangar, todos con el mismo permiso: cualquiera puede registrar
 ## 6. Reglas de negocio
 1. Una nave está **apta** si cumple las tres condiciones:
    - tiene al menos un cuarto del tanque de combustible (25 % o más);
-   - lleva 3 misiones asignadas o menos desde su última revisión;
+   - lleva menos de 3 misiones asignadas desde su última revisión (con 3 ya no es apta y no recibe otra hasta su próxima revisión);
    - no está en dique seco.
 2. No se puede asignar una misión a una nave no apta.
 3. Una misión suma al contador de la nave en cuanto se asigna, aunque todavía no se haya completado.

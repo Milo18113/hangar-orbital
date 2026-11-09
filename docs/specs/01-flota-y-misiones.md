@@ -144,7 +144,7 @@ Archivo: `src/dominio/aptitud.ts`. Recibe `nave: Pick<Nave, 'combustible' | 'enR
 
 Acumula todos los motivos que se cumplan, en este orden:
 1. `combustible < 25` → `combustible_insuficiente`
-2. `misionesDesdeRevision > 3` → `revision_pendiente`
+2. `misionesDesdeRevision >= 3` → `revision_pendiente`
 3. `enReparacion` → `en_reparacion`
 
 Si no se cumple ninguno, devuelve `{ puede: true }`.
@@ -154,7 +154,7 @@ El mismo archivo exporta `MENSAJES_MOTIVO: Record<MotivoRechazo, string>`, que u
 | Motivo | Mensaje |
 |---|---|
 | `combustible_insuficiente` | Combustible insuficiente: necesita al menos un 25 %. |
-| `revision_pendiente` | Necesita revisión: lleva más de 3 misiones desde la última. |
+| `revision_pendiente` | Necesita revisión: ya tiene 3 misiones desde la última. |
 | `en_reparacion` | La nave está en reparación. |
 
 ## 4. Servicios (`src/services/`)
@@ -226,13 +226,13 @@ Ningún componente importa Supabase; todos usan los servicios. "Hoy" se obtiene 
 
 ### HU-1.3 · Asignar una misión a una nave apta
 - **HU-1.3-CA1:** al asignar a una nave apta (60 %, 1 misión, operativa) una misión con destino, despegue mañana y 5 días, la app DEBE guardarla y mostrar la confirmación con destino, fecha y duración.
-- **HU-1.3-CA2:** al asignar una misión a una nave apta con 2 misiones desde la última revisión, la nave DEBE pasar a mostrar 3 misiones y DEBE seguir apta.
-- **HU-1.3-CA3:** con 3 misiones desde la última revisión y el resto en regla, la app DEBE aceptar la misión.
-- **HU-1.3-CA4:** con 4 misiones desde la última revisión, la app NO DEBE asignar la misión, y DEBE indicar que la nave necesita revisión.
+- **HU-1.3-CA2:** al asignar una misión a una nave apta con 2 misiones desde la última revisión, la nave DEBE pasar a mostrar 3 misiones y DEBE dejar de ser apta.
+- **HU-1.3-CA3:** con 2 misiones desde la última revisión y el resto en regla, la app DEBE aceptar la misión.
+- **HU-1.3-CA4:** con 3 misiones desde la última revisión, la app NO DEBE asignar la misión, y DEBE indicar que la nave necesita revisión.
 - **HU-1.3-CA5:** con un 24 % de combustible, la app NO DEBE asignar la misión, y DEBE indicar combustible insuficiente.
 - **HU-1.3-CA6:** con un 25 % de combustible y el resto en regla, la app DEBE aceptar la misión.
 - **HU-1.3-CA7:** con la nave en reparación, la app NO DEBE asignar la misión, y DEBE indicar que la nave está en reparación.
-- **HU-1.3-CA8:** con poco combustible y 4 misiones a la vez, la app NO DEBE asignar la misión, y DEBE mostrar los dos motivos.
+- **HU-1.3-CA8:** con poco combustible y 3 misiones a la vez, la app NO DEBE asignar la misión, y DEBE mostrar los dos motivos.
 - **HU-1.3-CA9:** la app NO DEBE asignar una misión sin nave, destino, fecha de despegue o duración, y DEBE indicar qué dato falta.
 - **HU-1.3-CA10:** la app DEBE aceptar una misión con fecha de despegue hoy.
 - **HU-1.3-CA11:** la app NO DEBE aceptar una misión con fecha de despegue ayer, y DEBE mostrar «La fecha de despegue no puede ser anterior a hoy.».
@@ -255,13 +255,13 @@ Ningún componente importa Supabase; todos usan los servicios. "Hoy" se obtiene 
 | HU-1.1-CA8 | Vitest | -1, 101 y 24,5 → error; 0 y 100 → sin error. |
 | HU-1.1-CA9 | Manual | Registrar "Aurora" dos veces; la segunda muestra el aviso. |
 | HU-1.3-CA1 | Manual | Asignar la misión y ver la confirmación. |
-| HU-1.3-CA2 | Manual | Asignar una misión a una nave con 2 misiones y ver que pasa a 3 y sigue apta. |
-| HU-1.3-CA3 | Vitest | 3 misiones → `puede: true`. |
-| HU-1.3-CA4 | Vitest | 4 misiones → motivos `['revision_pendiente']`. |
+| HU-1.3-CA2 | Manual | Asignar una misión a una nave con 2 misiones y ver que pasa a 3 y deja de ser apta. |
+| HU-1.3-CA3 | Vitest | 2 misiones → `puede: true`. |
+| HU-1.3-CA4 | Vitest | 3 misiones → motivos `['revision_pendiente']`. |
 | HU-1.3-CA5 | Vitest | 24 % → motivos `['combustible_insuficiente']`. |
 | HU-1.3-CA6 | Vitest | 25 % → `puede: true`. |
 | HU-1.3-CA7 | Vitest + manual | `enReparacion: true` → motivos `['en_reparacion']`; en el navegador, con una nave puesta en reparación desde el panel. |
-| HU-1.3-CA8 | Vitest | 10 % y 4 misiones → los dos motivos. |
+| HU-1.3-CA8 | Vitest | 10 % y 3 misiones → los dos motivos. |
 | HU-1.3-CA9 | Vitest | `validarMision` con cada campo vacío → error en ese campo. |
 | HU-1.3-CA10 | Vitest | Fecha igual a `hoy` → sin error. |
 | HU-1.3-CA11 | Vitest | Fecha de ayer → error en `fechaDespegue`. |
@@ -283,7 +283,7 @@ Cubren todos los criterios marcados como "Vitest" en la tabla anterior:
 - [ ] HU-1.1-CA2: el selector solo ofrece las tres clases.
 - [ ] HU-1.1-CA9: registrar "Aurora" dos veces; la segunda muestra el aviso de nombre repetido.
 - [ ] HU-1.3-CA1: asignar una misión y ver la confirmación con destino, fecha y duración.
-- [ ] HU-1.3-CA2: una nave con 2 misiones pasa a 3 y sigue apta.
+- [ ] HU-1.3-CA2: una nave con 2 misiones pasa a 3 y deja de ser apta.
 - [ ] HU-1.3-CA7: con una nave puesta en reparación desde el panel de Supabase, la asignación se rechaza con el motivo "en reparación".
 
 ## 8. Tickets y archivos

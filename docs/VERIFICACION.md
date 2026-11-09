@@ -34,12 +34,12 @@ Las filas van en orden: cada una parte del estado que dejó la anterior. "Mañan
 | V-13 | HU-1.3-CA10 | Asignar a Duna una misión con despegue hoy, destino Fobos, 2 días. | Se acepta. | |
 | V-14 | HU-1.3-CA11 | Asignar a Duna una misión con despegue ayer, destino Deimos, 2 días. | No se asigna. Aparece «La fecha de despegue no puede ser anterior a hoy.». Duna no suma misiones. | |
 | V-15 | HU-1.3-CA13 | Asignar a Duna una misión con duración 0, despegue mañana, destino Ceres. | No se asigna. Aparece «La duración debe ser un número entero de días, como mínimo 1.». | |
-| V-16 | HU-1.3-CA12 | Asignar a Duna una misión con duración 1, despegue mañana, destino Ceres. | Se acepta. La confirmación dice «1 día». Duna queda con 3 misiones. | |
-| V-17 | HU-1.3-CA2 | Asignar a Aurora una segunda misión válida y, cuando la flota muestre 2, una tercera. | Tras la tercera, Aurora muestra 3 misiones y sigue "Apta". | |
-| V-18 | HU-1.3-CA3 | Asignar a Aurora una cuarta misión válida. Ahora mismo tiene 3. | **Se acepta**: con 3 misiones la nave sigue apta. Después, la flota muestra a Aurora con 4 misiones y "No apta", con el motivo «Necesita revisión: lleva más de 3 misiones desde la última.». | |
-| V-19 | HU-1.3-CA4 | Asignar a Aurora una quinta misión válida. Ahora mismo tiene 4. | Se rechaza con el motivo de revisión. Aurora sigue con 4 misiones. | |
+| V-16 | HU-1.3-CA12 | Asignar a Duna una misión con duración 1, despegue mañana, destino Ceres. | Se acepta. La confirmación dice «1 día». Duna queda con 3 misiones y pasa a "No apta", con el motivo «Necesita revisión: ya tiene 3 misiones desde la última.». | |
+| V-17 | HU-1.3-CA2, CA3 | Asignar a Aurora una segunda misión válida y, cuando la flota muestre 2, una tercera. | Las dos se aceptan. Con 2 misiones, Aurora sigue "Apta". Tras la tercera, muestra 3 misiones y "No apta", con el motivo «Necesita revisión: ya tiene 3 misiones desde la última.». | |
+| V-18 | HU-1.3-CA4 | Asignar a Aurora una cuarta misión válida. Ahora mismo tiene 3. | Se rechaza con el motivo de revisión. Aurora sigue con 3 misiones. | |
+| V-19 | — | Retirada: con el límite de 3 misiones, el rechazo ya ocurre en V-18. Se conserva el número porque otros documentos citan estas filas. | — | No aplica |
 | V-20 | HU-1.3-CA8 | En el panel de Supabase, poner el combustible de Aurora a 10. Recargar la app e intentar asignarle una misión válida. | Se rechaza con los dos motivos a la vez: combustible insuficiente y revisión. | |
-| V-21 | HU-1.3-CA7 | En el panel de Supabase, poner `en_reparacion = true` en Duna. Recargar e intentar asignarle una misión válida. | Se rechaza con «La nave está en reparación.». En la flota, Duna sale como "En reparación" y "No apta". | |
+| V-21 | HU-1.3-CA7 | En el panel de Supabase, poner `en_reparacion = true` en Duna. Recargar e intentar asignarle una misión válida. | Se rechaza con «La nave está en reparación.» y también con el motivo de revisión, porque Duna ya tiene 3 misiones. En la flota, Duna sale como "En reparación" y "No apta". | |
 
 ## Cierre
 - [ ] Todas las filas tienen anotado su resultado obtenido.

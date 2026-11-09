@@ -101,15 +101,23 @@ export default function FormularioMision({ version, onAsignada }: Props) {
   return (
     // noValidate: los mensajes los da validarMision, no el navegador
     <form
+      className="formulario"
       noValidate
       onSubmit={(evento) => {
         evento.preventDefault();
         void asignar();
       }}
     >
-      <p>
+      <div className="campo">
         <label htmlFor="mision-nave">Nave</label>
-        <select id="mision-nave" value={naveId} onChange={(e) => setNaveId(e.target.value)}>
+        <select
+          id="mision-nave"
+          className="campo-control"
+          value={naveId}
+          onChange={(e) => setNaveId(e.target.value)}
+          aria-invalid={errores.naveId ? true : undefined}
+          aria-describedby={errores.naveId ? 'mision-nave-error' : undefined}
+        >
           <option value="">Elige una nave</option>
           {naves.map((nave) => (
             <option key={nave.id} value={nave.id}>
@@ -117,55 +125,91 @@ export default function FormularioMision({ version, onAsignada }: Props) {
             </option>
           ))}
         </select>
-        {errores.naveId && <span role="alert">{errores.naveId}</span>}
-      </p>
+        {errores.naveId && (
+          <span id="mision-nave-error" className="campo-error" role="alert">
+            {errores.naveId}
+          </span>
+        )}
+      </div>
 
-      <p>
+      <div className="campo">
         <label htmlFor="mision-destino">Destino</label>
-        <input id="mision-destino" value={destino} onChange={(e) => setDestino(e.target.value)} />
-        {errores.destino && <span role="alert">{errores.destino}</span>}
-      </p>
+        <input
+          id="mision-destino"
+          className="campo-control"
+          value={destino}
+          onChange={(e) => setDestino(e.target.value)}
+          aria-invalid={errores.destino ? true : undefined}
+          aria-describedby={errores.destino ? 'mision-destino-error' : undefined}
+        />
+        {errores.destino && (
+          <span id="mision-destino-error" className="campo-error" role="alert">
+            {errores.destino}
+          </span>
+        )}
+      </div>
 
-      <p>
+      <div className="campo">
         <label htmlFor="mision-fecha">Fecha de despegue</label>
         <input
           id="mision-fecha"
+          className="campo-control campo-control--cifra"
           type="date"
           min={hoy}
           value={fechaDespegue}
           onChange={(e) => setFechaDespegue(e.target.value)}
+          aria-invalid={errores.fechaDespegue ? true : undefined}
+          aria-describedby={errores.fechaDespegue ? 'mision-fecha-error' : undefined}
         />
-        {errores.fechaDespegue && <span role="alert">{errores.fechaDespegue}</span>}
-      </p>
+        {errores.fechaDespegue && (
+          <span id="mision-fecha-error" className="campo-error" role="alert">
+            {errores.fechaDespegue}
+          </span>
+        )}
+      </div>
 
-      <p>
+      <div className="campo">
         <label htmlFor="mision-duracion">Duración (días)</label>
         <input
           id="mision-duracion"
+          className="campo-control campo-control--cifra"
           type="number"
           min={1}
           step={1}
           value={duracion}
           onChange={(e) => setDuracion(e.target.value)}
+          aria-invalid={errores.duracionDias ? true : undefined}
+          aria-describedby={errores.duracionDias ? 'mision-duracion-error' : undefined}
         />
-        {errores.duracionDias && <span role="alert">{errores.duracionDias}</span>}
-      </p>
+        {errores.duracionDias && (
+          <span id="mision-duracion-error" className="campo-error" role="alert">
+            {errores.duracionDias}
+          </span>
+        )}
+      </div>
 
-      <button type="submit" disabled={enviando}>
+      <button className="boton boton--primario" type="submit" disabled={enviando}>
         Asignar misión
       </button>
 
       {rechazo && (
-        <div role="alert">
+        <div className="aviso aviso--error" role="alert">
           <p>No se puede asignar la misión a «{rechazo.nombreNave}»:</p>
-          <ul>
+          <ul className="motivos">
             {rechazo.motivos.map((motivo) => (
               <li key={motivo}>{MENSAJES_MOTIVO[motivo]}</li>
             ))}
           </ul>
         </div>
       )}
-      {aviso && <p role={aviso.tipo === 'error' ? 'alert' : 'status'}>{aviso.texto}</p>}
+      {aviso && (
+        <p
+          className={`aviso aviso--${aviso.tipo}`}
+          role={aviso.tipo === 'error' ? 'alert' : 'status'}
+        >
+          {aviso.texto}
+        </p>
+      )}
     </form>
   );
 }

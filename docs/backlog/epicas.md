@@ -24,7 +24,7 @@ Basado en [docs/prd/hangar-mvp.md](../prd/hangar-mvp.md). Los números de alcanc
 - A4 (parcial): ver qué naves están aptas y, si no lo están, por qué.
 
 **Reglas de negocio:**
-- R1: definición de apta (combustible del 25 % o más, 3 misiones o menos desde la última revisión y fuera de dique seco).
+- R1: definición de apta (combustible del 25 % o más, menos de 3 misiones desde la última revisión y fuera de dique seco).
 - R4: el combustible es obligatorio al completar una misión y se puede corregir en cualquier momento.
 - R5: una revisión pone el contador de misiones a cero.
 - R6: al entrar en dique seco, la nave pierde sus misiones pendientes y no puede recibir otras nuevas.

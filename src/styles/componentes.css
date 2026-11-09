@@ -1,0 +1,340 @@
+/* Layout: DESIGN.md §5 */
+.contenedor {
+  display: grid;
+  gap: var(--espacio-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--espacio-6) var(--espacio-4) var(--espacio-12);
+}
+
+.encabezado-subtitulo {
+  color: var(--color-texto-suave);
+}
+
+.tablero,
+.columna-formularios,
+.seccion-flota {
+  display: grid;
+  gap: var(--espacio-4);
+  align-content: start;
+  min-width: 0;
+}
+
+/* Los medios no aceptan variables: 900px es el corte de DESIGN.md §5 */
+@media (min-width: 900px) {
+  .tablero {
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: var(--espacio-6);
+  }
+}
+
+/* Panel */
+.panel {
+  display: grid;
+  gap: var(--espacio-4);
+  background: var(--color-superficie);
+  border: var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-6);
+}
+
+/* Campo de formulario */
+.formulario {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+.campo {
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.campo label {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+.campo-control {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 var(--espacio-3);
+  background: var(--color-superficie-alta);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente-texto);
+  font-size: var(--texto-base);
+  transition: border-color var(--duracion-corta) ease-out;
+}
+
+.campo-control--cifra {
+  font-family: var(--fuente-cifras);
+  font-variant-numeric: tabular-nums;
+}
+
+.campo-control[aria-invalid='true'] {
+  border-color: var(--color-no-apta);
+}
+
+.campo-control:focus-visible {
+  border-color: var(--color-acento);
+}
+
+.campo-control:focus-visible,
+.boton:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.campo-error {
+  color: var(--color-no-apta);
+  font-size: var(--texto-sm);
+}
+
+/* Botón */
+.boton {
+  min-height: 40px;
+  padding: 0 var(--espacio-4);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente-texto);
+  font-size: var(--texto-base);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton--primario {
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+  border: 1px solid var(--color-acento);
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Insignia de estado */
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--espacio-2);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente-titulo);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.insignia--apta {
+  color: var(--color-apta);
+  background: var(--color-apta-fondo);
+}
+
+.insignia--no-apta {
+  color: var(--color-no-apta);
+  background: var(--color-no-apta-fondo);
+}
+
+.insignia--reparacion {
+  color: var(--color-reparacion);
+  background: var(--color-reparacion-fondo);
+}
+
+/* Etiqueta de dato y cifras */
+.etiqueta {
+  color: var(--color-texto-suave);
+  font-family: var(--fuente-titulo);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cifra {
+  font-family: var(--fuente-cifras);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Barra de combustible */
+.combustible {
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.combustible-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3.5rem;
+  gap: var(--espacio-3);
+  align-items: center;
+}
+
+.combustible-fila .cifra {
+  text-align: right;
+}
+
+.pista {
+  position: relative;
+  height: 8px;
+  background: var(--color-superficie-alta);
+  border-radius: var(--radio-sm);
+}
+
+.relleno {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--color-apta);
+  border-radius: var(--radio-sm);
+}
+
+.relleno--bajo {
+  background: var(--color-no-apta);
+}
+
+/* La marca sobresale de la pista para que se vea también sobre el relleno */
+.umbral {
+  position: absolute;
+  top: calc(-1 * var(--espacio-1));
+  left: 0;
+  width: 100%;
+  height: calc(100% + var(--espacio-2));
+  overflow: visible;
+}
+
+.umbral line {
+  stroke: var(--color-texto-suave);
+  stroke-width: 2px;
+}
+
+/* Contador de misiones */
+.contador {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+.contador-valor,
+.marcas {
+  display: inline-flex;
+  align-items: center;
+}
+
+.contador-valor {
+  gap: var(--espacio-2);
+}
+
+.marcas {
+  gap: var(--espacio-1);
+}
+
+.marca {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--color-texto-suave);
+}
+
+.marca--ocupada {
+  background: var(--color-texto);
+  border-color: var(--color-texto);
+}
+
+/* Tarjeta de nave */
+.flota {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: var(--espacio-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarjeta-nave {
+  display: grid;
+  gap: var(--espacio-3);
+  align-content: start;
+  background: var(--color-superficie);
+  border: var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-4);
+}
+
+.tarjeta-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+}
+
+.tarjeta-cabecera h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.clase {
+  color: var(--color-texto-suave);
+  font-family: var(--fuente-cifras);
+  font-size: var(--texto-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.divisor {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: var(--borde);
+}
+
+.estado-operativa {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+.motivos {
+  display: grid;
+  gap: var(--espacio-1);
+  margin: 0;
+  padding-left: var(--espacio-4);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+/* Avisos */
+.aviso {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-sm);
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+}
+
+.aviso .motivos {
+  color: var(--color-texto);
+}
+
+.aviso--exito {
+  background: var(--color-apta-fondo);
+  border: 1px solid var(--color-apta);
+}
+
+.aviso--error {
+  background: var(--color-no-apta-fondo);
+  border: 1px solid var(--color-no-apta);
+}
+
+/* Estados de la flota */
+.estado-cargando {
+  color: var(--color-texto-suave);
+}
+
+.estado-vacio {
+  padding: var(--espacio-6);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-md);
+  text-align: center;
+}
